@@ -29,6 +29,22 @@ int main() {
                 window.close();
         }
 
+		if (Keyboard::isKeyPressed(Keyboard::Left))
+		{
+			player.move(-player_speed, 0);
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Right))
+		{
+			player.move(player_speed, 0);
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Up))
+		{
+			player.move(0, -player_speed);
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Down))
+		{
+			player.move(0, player_speed);
+		}
 
         window.clear(Color::Black);
         window.draw(player);
