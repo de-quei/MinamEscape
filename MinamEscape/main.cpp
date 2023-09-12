@@ -6,7 +6,7 @@ using namespace sf;
 using namespace std;
 
 struct Textures {
-    Texture bg;         // 배경 이미지
+    Texture bg;  // 배경 이미지
 };
 
 // 전역 변수
@@ -46,7 +46,8 @@ void Button::draw(RenderWindow& window) {
 
 int main() {
     struct Textures t;
-    t.bg.loadFromFile("./resources/images/start.png");
+    // 왜 나는 상대경로 안돼 ㅠㅠ? 절대경로만 된다 ㅠㅠ...
+    t.bg.loadFromFile("C:/Users/User/source/repos/de-quei/MinamEscape/MinamEscape/resources/images/start.png");
 
     RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "MinamEscape");
     window.setFramerateLimit(60);
@@ -73,14 +74,14 @@ int main() {
     string inputString;
 
     //player 
-    RectangleShape player;
-    player.setSize(Vector2f(40, 40));
-    player.setPosition(100, 100);
-    player.setFillColor(Color::Red);
-    int player_speed = 5;
+    //RectangleShape player;
+    //player.setSize(Vector2f(40, 40));
+    //player.setPosition(100, 100);
+    //player.setFillColor(Color::Red);
+    //int player_speed = 5;
 
     // 버튼 생성
-    Button myButton(100, 100, 200, 50, "Click Me");
+    Button myButton(500, 590, 200, 50, "Click Me");
     bool isTransitioning = false;
 
     while (window.isOpen()) {
