@@ -6,7 +6,7 @@ using namespace sf;
 using namespace std;
 
 struct Textures {
-    Texture bg;         // 배경 이미지
+    Texture bg;  // 배경 이미지
 };
 
 // 전역 변수
@@ -47,7 +47,7 @@ void Button::draw(RenderWindow& window) {
 int main() {
     struct Textures t;
     // 왜 나는 상대경로 안돼 ㅠㅠ? 절대경로만 된다 ㅠㅠ...
-    t.bg.loadFromFile("./resources/images/start.png");
+    t.bg.loadFromFile("C:/Users/User/source/repos/de-quei/MinamEscape/MinamEscape/resources/images/start.png");
 
     RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "MinamEscape");
     window.setFramerateLimit(60);
