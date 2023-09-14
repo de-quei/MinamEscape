@@ -27,12 +27,14 @@ private:
 Button::Button(float x, float y, float width, float height, const string& text) {
     shape.setPosition(x, y);
     shape.setSize(Vector2f(width, height));
-    shape.setFillColor(Color(128, 128, 128)); // 회색 배경
+    shape.setFillColor(Color(125, 125, 125)); // 회색 배경
 
     // 버튼 텍스트 설정
     buttonText.setString(text);
     buttonText.setPosition(x + 10, y + 10);
     buttonText.setFillColor(Color::Black);
+    buttonText.setCharacterSize(24); 
+    buttonText.setStyle(Text::Bold); 
 }
 
 bool Button::isClicked(const Vector2f& mousePos) {
@@ -40,8 +42,8 @@ bool Button::isClicked(const Vector2f& mousePos) {
 }
 
 void Button::draw(RenderWindow& window) {
-    window.draw(shape);
     window.draw(buttonText);
+    window.draw(shape);
 }
 
 int main() {
@@ -58,15 +60,16 @@ int main() {
 
     // 폰트 설정
     Font font;
-    font.loadFromFile("C:/Windows/Fonts/arial.ttf");
+    font.loadFromFile("C:/Windows/Fonts/Arial.ttf");
 
     // 텍스트 입력 창
     RectangleShape inputBox(Vector2f(400, 60));
+
     // 창 중앙에 배치
     inputBox.setPosition((W_WIDTH - 870), (W_HEIGHT - 200));
     inputBox.setFillColor(Color(255, 255, 255)); // 회색 (R=128, G=128, B=128)
 
-    // 텍스트
+    // 이름 입력 텍스트
     Text inputText("", font, 35);
     inputText.setPosition(inputBox.getPosition().x + 10, inputBox.getPosition().y + 5);
     inputText.setFillColor(Color::Black);
