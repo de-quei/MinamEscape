@@ -6,23 +6,30 @@ using namespace sf;
 using namespace std;
 
 struct Textures {
-    Texture bg;  // 배경 이미지
+    Texture bg[5];  // 다섯 개의 배경 이미지
 };
 
-// 전역 변수
-const int W_WIDTH = 1280, W_HEIGHT = 720;   //창의 크기
+const int W_WIDTH = 1280, W_HEIGHT = 720;
 
 int main() {
     struct Textures t;
-    // 경로 바꿔줄것
-    t.bg.loadFromFile("C:/Users/User/source/repos/de-quei/MinamEscape/MinamEscape/resources/images/start.png");
+    // 경로 바꿔줄 것
+    for (int i = 0; i < 6; ++i) {
+        string imagePath = "./resources/images/start" + to_string(i) + ".png";
+        if (!t.bg[i].loadFromFile(imagePath)) {
+            cerr << "Failed to load image: " << imagePath << endl;
+            return 1;
+        }
+    }
 
     RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "MinamEscape");
     window.setFramerateLimit(60);
 
     Sprite start_bg_sprite;
-    start_bg_sprite.setTexture(t.bg);
-    start_bg_sprite.setPosition(0, 0);
+    start_bg_sprite.setTexture(t.bg[0]); // 처음 실행 시 start0.png 설정
+
+    int currentBackground = 0; // 현재 배경 인덱스
+
 
     while (window.isOpen()) {
         Event event;
@@ -30,12 +37,15 @@ int main() {
             if (event.type == Event::Closed) {
                 window.close();
             }
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
+                // 엔터 키를 누를 때마다 배경 변경
+                currentBackground = (currentBackground + 1) % 5;
+                start_bg_sprite.setTexture(t.bg[currentBackground]);
+            }
         }
 
         window.clear(Color::White);
-
         window.draw(start_bg_sprite);
-
         window.display();
     }
 
