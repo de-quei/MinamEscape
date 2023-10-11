@@ -6,7 +6,7 @@ using namespace sf;
 using namespace std;
 
 struct Textures {
-    Texture bg[5];  // 다섯 개의 배경 이미지
+    Texture bg[6];  // 여섯 개의 배경 이미지
 };
 
 const int W_WIDTH = 1280, W_HEIGHT = 720;
@@ -30,7 +30,6 @@ int main() {
 
     int currentBackground = 0; // 현재 배경 인덱스
 
-
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -39,8 +38,10 @@ int main() {
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
                 // 엔터 키를 누를 때마다 배경 변경
-                currentBackground = (currentBackground + 1) % 5;
-                start_bg_sprite.setTexture(t.bg[currentBackground]);
+                if (currentBackground < 5) { // 이미지 인덱스가 0부터 5까지
+                    currentBackground = (currentBackground + 1) % 6;
+                    start_bg_sprite.setTexture(t.bg[currentBackground]);
+                }
             }
         }
 
