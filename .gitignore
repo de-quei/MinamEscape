@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/MinamEscape-front/Library/Bee
+/MinamEscape-front/Library/BurstCache/JIT
+/MinamEscape-front/Library/GridBrush
+/MinamEscape-front/Library/PackageCache
+/MinamEscape-front/Library/PackageManager
+/MinamEscape-front
+/My project
