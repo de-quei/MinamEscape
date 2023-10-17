@@ -7,7 +7,7 @@ using namespace sf;
 using namespace std;
 
 struct Textures {
-    Texture bg[6];  // 여섯 개의 배경 이미지
+    Texture bg[15];  // 여섯 개의 배경 이미지
     Texture minseo;
 };
 
@@ -27,7 +27,7 @@ int main() {
     sb.StartBgm.loadFromFile("./resources/sounds/startBgm.wav");
 
     // 경로 바꿔줄 것
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 15; ++i) {
         string imagePath = "./resources/images/start" + to_string(i) + ".png";
         if (!t.bg[i].loadFromFile(imagePath)) {
             cerr << "Failed to load image: " << imagePath << endl;
@@ -72,8 +72,8 @@ int main() {
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
                 // 엔터 키를 누를 때마다 배경 변경
-                if (currentBackground < 5) { // 이미지 인덱스가 0부터 5까지
-                    currentBackground = (currentBackground + 1) % 6;
+                if (currentBackground < 14) { // 이미지 인덱스가 0부터 14까지
+                    currentBackground = (currentBackground + 1) % 15;
                     start_bg_sprite.setTexture(t.bg[currentBackground]);
                 }
 
@@ -96,10 +96,10 @@ int main() {
         window.draw(start_bg_sprite);
 
         if (currentBackground == 3) {
-            // 네번째 이미지일 때만 민서 이미지를 그립니다.
+            // 네번째 이미지일 때만 민서 그리기
             window.draw(minseo_sprite);
 
-            // 민서 이미지를 왼쪽으로 움직이게 합니다.
+            // 민서 이미지를 왼쪽으로 움직이게 하기
             float newPositionX = minseo_sprite.getPosition().x - minseoSpeed;
             minseo_sprite.setPosition(newPositionX, minseo_sprite.getPosition().y);
         }
