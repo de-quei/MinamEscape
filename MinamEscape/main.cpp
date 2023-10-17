@@ -13,7 +13,8 @@ struct Textures {
 
 struct SBuffer {
     SoundBuffer Alarm;
-   };
+    SoundBuffer StartBgm;
+};
 
 const int W_WIDTH = 1280, W_HEIGHT = 720;
 
@@ -23,6 +24,7 @@ int main() {
 
     struct SBuffer sb;
     sb.Alarm.loadFromFile("./resources/sounds/alarm.ogg");
+    sb.StartBgm.loadFromFile("./resources/sounds/startBgm.wav");
 
     // 경로 바꿔줄 것
     for (int i = 0; i < 6; ++i) {
@@ -33,28 +35,34 @@ int main() {
         }
     }
 
-    //BGM
+    // BGM
     Sound Alarm_sound;
     Alarm_sound.setBuffer(sb.Alarm);
     Alarm_sound.setVolume(90);
-    Alarm_sound.setLoop(1);       //BGM 무한반복
+    Alarm_sound.setLoop(1);  // BGM 무한반복
+
+    Sound startBgm;
+    startBgm.setBuffer(sb.StartBgm);
+    startBgm.setVolume(90);
+    startBgm.setLoop(1);
+
+    startBgm.play();
 
     RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "MinamEscape");
     window.setFramerateLimit(60);
 
     Sprite start_bg_sprite;
-    start_bg_sprite.setTexture(t.bg[0]); // 처음 실행 시 start0.png 설정
+    start_bg_sprite.setTexture(t.bg[0]);  // 처음 실행 시 start0.png 설정
 
     int currentBackground = 0; // 현재 배경 인덱스
 
     // 민서 이미지 스프라이트 설정
     Sprite minseo_sprite;
     minseo_sprite.setTexture(t.minseo);
-    minseo_sprite.setOrigin(t.minseo.getSize().x / 2, t.minseo.getSize().y / 2); // 이미지 중심을 기준으로 설정
-    minseo_sprite.setPosition(W_WIDTH - 100, W_HEIGHT / 2); // 화면 중앙에 배치
+    minseo_sprite.setOrigin(t.minseo.getSize().x / 2, t.minseo.getSize().y / 2);  // 이미지 중심을 기준으로 설정
+    minseo_sprite.setPosition(W_WIDTH - 100, W_HEIGHT / 2);  // 화면 중앙에 배치
 
-    bool movingMinseo = false;
-    float minseoSpeed = 10.0f;
+    int minseoSpeed = 12;
 
     while (window.isOpen()) {
         Event event;
@@ -68,30 +76,32 @@ int main() {
                     currentBackground = (currentBackground + 1) % 6;
                     start_bg_sprite.setTexture(t.bg[currentBackground]);
                 }
+
+                // 페이지 전환시 BGM 상태 변경
+                switch (currentBackground) {
+                case 1:
+                    startBgm.stop();
+                    Alarm_sound.play();
+                    break;
+                case 2:
+                    Alarm_sound.stop();
+                    break;
+                default:
+                    break;
+                }
             }
         }
 
         window.clear(Color::White);
         window.draw(start_bg_sprite);
 
-        if (currentBackground == 1) {
-            Alarm_sound.play();
-        }
-
         if (currentBackground == 3) {
             // 네번째 이미지일 때만 민서 이미지를 그립니다.
             window.draw(minseo_sprite);
 
-            if (!movingMinseo) {
-                // 민서 이미지가 움직이지 않았다면 움직임 시작
-                movingMinseo = true;
-            }
-            else {
-                // 민서 이미지를 왼쪽으로 움직이게 합니다.
-                float newPositionX = minseo_sprite.getPosition().x - minseoSpeed;
-                minseo_sprite.setPosition(newPositionX, minseo_sprite.getPosition().y);
-
-            }
+            // 민서 이미지를 왼쪽으로 움직이게 합니다.
+            float newPositionX = minseo_sprite.getPosition().x - minseoSpeed;
+            minseo_sprite.setPosition(newPositionX, minseo_sprite.getPosition().y);
         }
 
         window.display();
