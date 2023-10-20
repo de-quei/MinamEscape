@@ -6,9 +6,38 @@
 using namespace sf;
 using namespace std;
 
+class Object {
+public:
+    int width_;
+    int height_;
+    RectangleShape sprite_;
+    Texture texture;
+
+    Texture* setImage(string path) {
+        if (texture.loadFromFile(path)) return &texture;
+    }
+
+    void setPosition(float x, float y) {
+        sprite_.setPosition(x, y);
+    }
+
+    void setSize(Vector2f size) {
+        sprite_.setSize(size);
+    }
+
+    void setTexture(Texture* tex) {
+        sprite_.setTexture(tex);
+    }
+
+    bool contains(int x, int y) {
+        return sprite_.getGlobalBounds().contains(x, y);
+    }
+};
+
 struct Textures {
-    Texture bg[15];  // 여섯 개의 배경 이미지
+    Texture bg[15];
     Texture minseo;
+    Texture startbtn;
 };
 
 struct SBuffer {
@@ -21,12 +50,12 @@ const int W_WIDTH = 1280, W_HEIGHT = 720;
 int main() {
     struct Textures t;
     t.minseo.loadFromFile("./resources/images/minseo1.png");
+    t.startbtn.loadFromFile("./resources/images/startbtn.png");
 
     struct SBuffer sb;
     sb.Alarm.loadFromFile("./resources/sounds/alarm.ogg");
     sb.StartBgm.loadFromFile("./resources/sounds/startBgm.wav");
 
-    // 경로 바꿔줄 것
     for (int i = 0; i < 15; ++i) {
         string imagePath = "./resources/images/start" + to_string(i) + ".png";
         if (!t.bg[i].loadFromFile(imagePath)) {
@@ -35,11 +64,10 @@ int main() {
         }
     }
 
-    // BGM
     Sound Alarm_sound;
     Alarm_sound.setBuffer(sb.Alarm);
     Alarm_sound.setVolume(90);
-    Alarm_sound.setLoop(1);  // BGM 무한반복
+    Alarm_sound.setLoop(1);
 
     Sound startBgm;
     startBgm.setBuffer(sb.StartBgm);
@@ -52,17 +80,24 @@ int main() {
     window.setFramerateLimit(60);
 
     Sprite start_bg_sprite;
-    start_bg_sprite.setTexture(t.bg[0]);  // 처음 실행 시 start0.png 설정
+    start_bg_sprite.setTexture(t.bg[0]);
 
-    int currentBackground = 0; // 현재 배경 인덱스
+    int currentBackground = 0;
 
-    // 민서 이미지 스프라이트 설정
     Sprite minseo_sprite;
     minseo_sprite.setTexture(t.minseo);
-    minseo_sprite.setOrigin(t.minseo.getSize().x / 2, t.minseo.getSize().y / 2);  // 이미지 중심을 기준으로 설정
-    minseo_sprite.setPosition(W_WIDTH - 100, W_HEIGHT / 2);  // 화면 중앙에 배치
+    minseo_sprite.setOrigin(t.minseo.getSize().x / 2, t.minseo.getSize().y / 2);
+    minseo_sprite.setPosition(W_WIDTH - 100, W_HEIGHT / 2);
 
     int minseoSpeed = 12;
+
+    Sprite startbtn_sprite;
+    startbtn_sprite.setTexture(t.startbtn);
+    startbtn_sprite.setPosition(322, 447);
+
+    Object startBtn;
+    startBtn.setSize(Vector2f(581, 208));
+    startBtn.setTexture(&t.startbtn);
 
     while (window.isOpen()) {
         Event event;
@@ -71,23 +106,21 @@ int main() {
                 window.close();
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
-                // 엔터 키를 누를 때마다 배경 변경
-                if (currentBackground < 14) { // 이미지 인덱스가 0부터 14까지
+                if (currentBackground < 14) {
                     currentBackground = (currentBackground + 1) % 15;
                     start_bg_sprite.setTexture(t.bg[currentBackground]);
-                }
 
-                // 페이지 전환시 BGM 상태 변경
-                switch (currentBackground) {
-                case 1:
-                    startBgm.stop();
-                    Alarm_sound.play();
-                    break;
-                case 2:
-                    Alarm_sound.stop();
-                    break;
-                default:
-                    break;
+                    switch (currentBackground) {
+                    case 1:
+                        startBgm.stop();
+                        Alarm_sound.play();
+                        break;
+                    case 2:
+                        Alarm_sound.stop();
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
         }
@@ -95,11 +128,12 @@ int main() {
         window.clear(Color::White);
         window.draw(start_bg_sprite);
 
+        if (currentBackground == 0) 
+            window.draw(startbtn_sprite);
+
         if (currentBackground == 3) {
-            // 네번째 이미지일 때만 민서 그리기
             window.draw(minseo_sprite);
 
-            // 민서 이미지를 왼쪽으로 움직이게 하기
             float newPositionX = minseo_sprite.getPosition().x - minseoSpeed;
             minseo_sprite.setPosition(newPositionX, minseo_sprite.getPosition().y);
         }
