@@ -6,36 +6,8 @@
 using namespace sf;
 using namespace std;
 
-class Object {
-public:
-    int width_;
-    int height_;
-    RectangleShape sprite_;
-    Texture texture;
-
-    Texture* setImage(string path) {
-        if (texture.loadFromFile(path)) return &texture;
-    }
-
-    void setPosition(float x, float y) {
-        sprite_.setPosition(x, y);
-    }
-
-    void setSize(Vector2f size) {
-        sprite_.setSize(size);
-    }
-
-    void setTexture(Texture* tex) {
-        sprite_.setTexture(tex);
-    }
-
-    bool contains(int x, int y) {
-        return sprite_.getGlobalBounds().contains(x, y);
-    }
-};
-
 struct Textures {
-    Texture bg[15];
+    Texture bg[18];
     Texture minseo;
     Texture startbtn;
 };
@@ -43,6 +15,9 @@ struct Textures {
 struct SBuffer {
     SoundBuffer Alarm;
     SoundBuffer StartBgm;
+    SoundBuffer Bgm2;
+    SoundBuffer boom;
+    SoundBuffer serious;
 };
 
 const int W_WIDTH = 1280, W_HEIGHT = 720;
@@ -55,8 +30,11 @@ int main() {
     struct SBuffer sb;
     sb.Alarm.loadFromFile("./resources/sounds/alarm.ogg");
     sb.StartBgm.loadFromFile("./resources/sounds/startBgm.wav");
+    sb.Bgm2.loadFromFile("./resources/sounds/Bgm2.ogg");
+    sb.boom.loadFromFile("./resources/sounds/boom.ogg");
+    sb.serious.loadFromFile("./resources/sounds/serious.ogg");
 
-    for (int i = 0; i < 15; ++i) {
+    for (int i = 0; i < 18; ++i) {
         string imagePath = "./resources/images/start" + to_string(i) + ".png";
         if (!t.bg[i].loadFromFile(imagePath)) {
             cerr << "Failed to load image: " << imagePath << endl;
@@ -75,6 +53,20 @@ int main() {
     startBgm.setLoop(1);
 
     startBgm.play();
+
+    Sound Bgm;
+    Bgm.setBuffer(sb.Bgm2);
+    Bgm.setVolume(90);
+    Bgm.setLoop(1);
+
+    Sound boom;
+    boom.setBuffer(sb.boom);
+    boom.setVolume(90);
+
+    Sound serious;
+    serious.setBuffer(sb.serious);
+    serious.setVolume(90);
+    serious.setLoop(1);
 
     RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "MinamEscape");
     window.setFramerateLimit(60);
@@ -95,9 +87,7 @@ int main() {
     startbtn_sprite.setTexture(t.startbtn);
     startbtn_sprite.setPosition(322, 447);
 
-    Object startBtn;
-    startBtn.setSize(Vector2f(581, 208));
-    startBtn.setTexture(&t.startbtn);
+    bool isStartButtonClicked = false; // 시작 버튼이 클릭되었는지 여부를 저장하는 변수
 
     while (window.isOpen()) {
         Event event;
@@ -106,29 +96,46 @@ int main() {
                 window.close();
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
-                if (currentBackground < 14) {
-                    currentBackground = (currentBackground + 1) % 15;
-                    start_bg_sprite.setTexture(t.bg[currentBackground]);
+                if (currentBackground > 0) {
+                    if (currentBackground < 17) {
+                        currentBackground = (currentBackground + 1) % 18;
+                        start_bg_sprite.setTexture(t.bg[currentBackground]);
 
-                    switch (currentBackground) {
-                    case 1:
-                        startBgm.stop();
-                        Alarm_sound.play();
-                        break;
-                    case 2:
-                        Alarm_sound.stop();
-                        break;
-                    default:
-                        break;
+                        switch (currentBackground) {
+                        case 2:
+                            Bgm.play();
+                            Alarm_sound.stop();
+                            break;
+                        case 4:
+                            Bgm.stop();
+                            boom.play();
+                            break;
+                        case 5 : 
+                            boom.stop();
+                            serious.play();
+                        default:
+                            break;
+                        }
                     }
                 }
             }
+            else if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) {
+                int mouseX = event.mouseButton.x;
+                int mouseY = event.mouseButton.y;
+                if (startbtn_sprite.getGlobalBounds().contains(mouseX, mouseY) && !isStartButtonClicked) {
+                    start_bg_sprite.setTexture(t.bg[1]);
+                    currentBackground = 1; 
+                    startBgm.stop();
+                    Alarm_sound.play();
+                }
+            }
+
         }
 
         window.clear(Color::White);
         window.draw(start_bg_sprite);
 
-        if (currentBackground == 0) 
+        if (currentBackground == 0 && !isStartButtonClicked)
             window.draw(startbtn_sprite);
 
         if (currentBackground == 3) {
@@ -140,6 +147,7 @@ int main() {
 
         window.display();
     }
+
 
     return 0;
 }
