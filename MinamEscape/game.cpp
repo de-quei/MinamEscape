@@ -9,30 +9,30 @@ Game::Game()
     girlSpeed(12), //소녀의 속도 12
     isStartButtonClicked(false) //초기 버튼의 상태 false
 {
-    window.create(VideoMode(1280, 720), "MinamEscape");
+    window.create(VideoMode(1280, 720), "MinamEscape"); //프레임 크기 1280*720
     window.setFramerateLimit(60); //60프레임
-    start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start0.png"));
+    start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start0.png")); //시작화면
     girl_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/girl1.png"));
     girl1_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/girl2.png"));
-    startbtn_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/startbtn.png"));
+    startbtn_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/startbtn.png")); //시작버튼
 
     startbtn_sprite.setPosition(323, 430); //시작버튼의 포지션
 
-    Alarm_sound.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/alarm.ogg"));
-    Alarm_sound.setVolume(90);
-    Alarm_sound.setLoop(true);
+    Alarm_sound.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/alarm.ogg")); //알람소리
+    Alarm_sound.setVolume(90); //볼륨 90
+    Alarm_sound.setLoop(true); //반복
 
-    startBgm.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/startBgm.wav"));
-    startBgm.setVolume(90);
-    startBgm.setLoop(true);
+    startBgm.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/startBgm.wav")); //시작Bgm
+    startBgm.setVolume(90); //볼륨 90
+    startBgm.setLoop(true); //반복
 
-    startBgm.play();
+    startBgm.play(); //시작Bgm을 플레이합니다.
 
     Bgm.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/Bgm2.ogg"));
     Bgm.setVolume(90);
     Bgm.setLoop(true);
 
-    boom.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/boom.ogg"));
+    boom.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/boom.ogg")); 
     boom.setVolume(90);
 
     serious.setBuffer(ResourceManager::getInstance().getSound("./resources/sounds/serious.ogg"));
@@ -47,10 +47,10 @@ void Game::run() {
         update();
         render();
 
-        if (currentBackground == 17) {
+        if (currentBackground == 17) { //배경번호가 17일땐 보스1을
             boss1();
         }
-        if (currentBackground == 31) {
+        if (currentBackground == 31) { //배경번호가 31일땐 보스2를 호출합니다.
             boss2();
         }
     }
@@ -63,12 +63,13 @@ void Game::handleInput() {
 
     while (window.pollEvent(event)) {
         if (event.type == Event::Closed) {
-            window.close();
+            window.close(); //창을 닫는다.
         }
         else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
             if (currentBackground > 0) {
                 if (currentBackground < 17) { //배경이 17 미만이라면
                     currentBackground = (currentBackground + 1) % 18; // +1
+                    //배경을 가져옵니다.
                     start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start" + to_string(currentBackground) + ".png"));
 
 
@@ -87,29 +88,29 @@ void Game::handleInput() {
                         serious.play();
                         break;
                     case 17:
-                        serious.stop();
+                        serious.stop(); //serious를 멈춥니다.
                         break;
                     default:
-                        break;
+                        break; //별 다른 효과가 없다면 다음 장면으로 넘어간다.
                     }
                 }
-                if (currentBackground >= 18) {
+                if (currentBackground >= 18) { //제니를 이긴 후
                     
                     currentBackground += 1; // +1
                     start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start" + to_string(currentBackground) + ".png"));
                     switch (currentBackground) { //배경에 번호 case
                     
                     case 18:
-                        serious.play();
+                        serious.play(); //serious를 플레이하고
                         break;
                     case 31:
-                        serious.stop();
+                        serious.stop(); //멈춥니다.
                         break;
                     default:
-                        break;
+                        break; //별 다른 효과가 없다면 다음 장면으로 넘어갑니다.
                     }
                 }
-                if (currentBackground >= 32) {
+                if (currentBackground >= 32) { //마녀 스타트
                     currentBackground += 1;
                     start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start" + to_string(currentBackground) + ".png"));
                     switch (currentBackground) { //배경에 번호 case
@@ -128,24 +129,27 @@ void Game::handleInput() {
                 }
             }
         }
+        //시작 버튼을 누르는 이벤트
         else if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) {
             int mouseX = event.mouseButton.x;
             int mouseY = event.mouseButton.y;
             if (startbtn_sprite.getGlobalBounds().contains(static_cast<float>(mouseX), static_cast<float>(mouseY)) && !isStartButtonClicked) {
-                start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start1.png"));
-                currentBackground = 1;
-                startBgm.stop();
-                Alarm_sound.play();
+                start_bg_sprite.setTexture(ResourceManager::getInstance().getTexture("./resources/images/start1.png")); //시작 화면을 가져온다.
+                currentBackground = 1; //배경번호는 1
+                startBgm.stop(); //시작 bgm이 흘러나오고
+                Alarm_sound.play(); //알람소리가 플레이됩니다.
             }
         }
     }
 }
-
+//obj1과 obj2의 충돌여부를 판단합니다.
 bool Game::is_collide(const RectangleShape& object1, const RectangleShape& object2) {
     return object1.getGlobalBounds().intersects(object2.getGlobalBounds());
 }
 
+//장지안
 void Game::boss1() {
+    //boss1의 텍스처
     struct Textures t;
     t.bg.loadFromFile("./resources/images/background_1.png");
     t.enemy.loadFromFile("./resources/images/enemy_1.png");
@@ -156,6 +160,7 @@ void Game::boss1() {
     t.player.loadFromFile("./resources/images/player.png");
     t.boss.loadFromFile("./resources/images/boss1.png");
 
+    //사운드
     struct SButters sb;
     sb.BGM.loadFromFile("./resources/sounds/TownTheme.ogg");
 
@@ -188,32 +193,32 @@ void Game::boss1() {
     gameover_sprite.setPosition(0, 0);
 
     // 플레이어
-    struct Player player;
+    struct Player player; 
     player.sprite.setTexture(&t.player);
     player.sprite.setPosition(100, 100);
     player.sprite.setSize(Vector2f(178, 540));
     player.x = player.sprite.getPosition().x;
     player.y = player.sprite.getPosition().y;
-    player.speed = 6;
-    player.speed_max = 15;
-    player.score = 0;
-    player.life = 5;
+    player.speed = 6; //플레이어의 속도
+    player.speed_max = 15; //속도 맥시멈
+    player.score = 0; //플레이어 스코어
+    player.life = 5; //플레이어 라이프
 
 
     // 적(enemy)
     struct Enemy enemy[ENEMY_NUM];
     Sound enemy_explosion_sound;
-    int enemy_score = 100;
-    int enemy_respawn_time = 5;
+    int enemy_score = 100; //플레이어가 얻을 수 있는 점수
+    int enemy_respawn_time = 5; //적이 리스폰하는 시간
     // enemy 초기화
     for (int i = 0; i < ENEMY_NUM; i++)
     {
         enemy[i].sprite.setTexture(&t.enemy);
         enemy[i].sprite.setSize(Vector2f(120, 120));
         enemy[i].sprite.setScale(-1, 1);      // 좌우대칭
-        enemy[i].sprite.setPosition(rand() % 300 + W_WIDTH * 0.9, rand() % 380);
-        enemy[i].life = 1;
-        enemy[i].speed = -(rand() % 10 + 1);
+        enemy[i].sprite.setPosition(rand() % 300 + W_WIDTH * 0.9, rand() % 380); //포지션은 저 범위 내 랜덤
+        enemy[i].life = 1; 
+        enemy[i].speed = -(rand() % 10 + 1); //스피드도 각기 랜덤
     }
 
 
@@ -224,13 +229,13 @@ void Game::boss1() {
     boss.sprite.setPosition(900, 100);
 
     // 총알
-    int bullet_speed = 25;
-    int bullet_idx = 0;
+    int bullet_speed = 25; //총알의 스피드
+    int bullet_idx = 0; //총알의 인덱스
     int bullet_delay = 400;      // 딜레이 0.5초
-    int bullet_delay_max = 100;
+    int bullet_delay_max = 100; //딜레이 맥시멈
     Sound bullet_sound;
     bullet_sound.setBuffer(sb.rumble);
-
+    //총알 초기화
     struct Bullet bullet[BULLET_NUM];
     for (int i = 0; i < BULLET_NUM; i++)
     {
@@ -244,11 +249,13 @@ void Game::boss1() {
     struct Item item[ITEM_NUM];
     item[0].sprite.setTexture(&t.item_speed);
     item[0].delay = 25000;   // 25초
-    item[0].type = SPEED;
-    item[1].sprite.setTexture(&t.item_delay);
-    item[1].delay = 20000;
-    item[1].type = DELAY;
+    item[0].type = SPEED; //스피드 아이템입니다.
 
+    item[1].sprite.setTexture(&t.item_delay);
+    item[1].delay = 20000; //20초
+    item[1].type = DELAY; //딜레이 아이템입니다.
+
+    //아이템 초기화
     for (int i = 0; i < ITEM_NUM; i++)
     {
         item[i].sprite.setSize(Vector2f(50, 50));
@@ -295,8 +302,7 @@ void Game::boss1() {
             is_gameover = 1;
         }
 
-        /* Player update */
-        // 방향키 start
+        //플레이어의 이동 제어 (방향키와 WASD 둘 다 조작 가능)
         if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player.sprite.move(-player.speed, 0);
@@ -312,7 +318,7 @@ void Game::boss1() {
         if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player.sprite.move(0, player.speed);
-        }   // 방향키 end
+        }
 
         // Player 이동범위 제한
         if (player.x < 0)
@@ -325,8 +331,6 @@ void Game::boss1() {
         else if (player.y > W_HEIGHT - 105)   // 105(그림의 높이)
             player.sprite.setPosition(player.x, W_HEIGHT - 105);
 
-
-        /* Bullet update */
         // 총알 발사
         if (Keyboard::isKeyPressed(Keyboard::Space))
         {
@@ -346,27 +350,26 @@ void Game::boss1() {
         }
         for (int i = 0; i < BULLET_NUM; i++)
         {
-            if (bullet[i].is_fired)
+            if (bullet[i].is_fired) //총알이 발사 되었을 때
             {
-                bullet[i].sprite.move(bullet_speed, 0);
-                if (bullet[i].sprite.getPosition().x > W_WIDTH)
-                    bullet[i].is_fired = 0;
+                bullet[i].sprite.move(bullet_speed, 0); //움직여용
+                if (bullet[i].sprite.getPosition().x > W_WIDTH) //총알의 x좌표가 오른쪽 맨 끝 벽에 닿았다면
+                    bullet[i].is_fired = 0; //총알은 사라집니다.
             }
         }
-
-
-        /* Enemy update */
+        
+        //Enemy 
         for (int i = 0; i < ENEMY_NUM; i++)
         {
             // 10초마다 enemy가 리스폰
             if (spent_time % (1000 * enemy_respawn_time) < 1000 / 60 + 1)
             {
-                // 게임이 진행중일 때만 적을 리스폰 시키겠다.
+                // 게임이 진행중일 때만 적을 리스폰 합니다.
                 if (!is_gameover)
                 {
-                    enemy[i].sprite.setSize(Vector2f(70, 70));
+                    enemy[i].sprite.setSize(Vector2f(70, 70)); //70*70
                     enemy[i].sprite.setPosition(rand() % 300 + W_WIDTH * 0.9, rand() % 380);
-                    enemy[i].life = 1;
+                    enemy[i].life = 1; 
                     // 10초마다 enemy의 속도+1
                     enemy[i].speed = -(rand() % 10 + 1 + (spent_time / 1000 / enemy_respawn_time));
                 }
@@ -377,15 +380,15 @@ void Game::boss1() {
                 // player, enemy 충돌
                 if (is_collide(player.sprite, enemy[i].sprite))
                 {
-                    enemy[i].life -= 1;
-                    player.life -= 1;;
+                    enemy[i].life -= 1; //적은 사라지고
+                    player.life -= 1;; //플레이어의 라이프는 깎입니다.
 
                 }
                 // 적이 왼쪽 끝에 진입하려는 순간
                 else if (enemy[i].sprite.getPosition().x < 0)
                 {
-                    player.life -= 1;
-                    enemy[i].life = 0;
+                    player.life -= 1; //플레이어의 라이프가 깎이고
+                    enemy[i].life = 0; //적이 사라집니다.
                 }
 
                 // 총알과 enemy의 충돌
@@ -395,10 +398,10 @@ void Game::boss1() {
                     {
                         if (bullet[j].is_fired)
                         {
-                            enemy[i].life -= 1;
-                            player.score += enemy_score;
+                            enemy[i].life -= 1; //적은 사라지고
+                            player.score += enemy_score; //플레이어는 점수를 얻고
 
-                            bullet[j].is_fired = 0;
+                            bullet[j].is_fired = 0; //총알은 사라집니다.
                         }
                     }
                 }
@@ -411,16 +414,16 @@ void Game::boss1() {
 
         for (int i = 0; i < ITEM_NUM; i++)
         {
-            if (!item[i].is_presented)
+            if (!item[i].is_presented)//아이템이 나타나지 않았을 때
             {
                 if (spent_time - item[i].presented_time > item[i].delay)
                 {
-                    item[i].sprite.setPosition((rand() % W_WIDTH) * 0.8, (rand() % W_HEIGHT) * 0.8);
-                    item[i].is_presented = 1;
+                    item[i].sprite.setPosition((rand() % W_WIDTH) * 0.8, (rand() % W_HEIGHT) * 0.8); //랜덤 생성
+                    item[i].is_presented = 1; //나타났음을 표시
                 }
             }
 
-            if (item[i].is_presented)
+            if (item[i].is_presented) //아이템이 나타났을 때
             {
                 // 아이템 획득시 효과를 얻고 아이템이 사라진다
                 if (is_collide(player.sprite, item[i].sprite))
@@ -428,45 +431,45 @@ void Game::boss1() {
                     switch (item[i].type)
                     {
                     case SPEED:   // player 이동속도
-                        player.speed += 2;
+                        player.speed += 2; //빨라진다.
 
-                        if (player.speed > player.speed_max)
-                            player.speed = player.speed_max;
+                        if (player.speed > player.speed_max) //맥시멈보다 스피드가 높아지면
+                            player.speed = player.speed_max; //그 이상으로 높아지지 않는다.
                         break;
                     case DELAY:   // player 공격속도
-                        bullet_delay -= 100;
+                        bullet_delay -= 100; //플레이어의 공속이 낮아진다.
 
-                        if (bullet_delay < bullet_delay_max)
-                            bullet_delay = bullet_delay_max;
+                        if (bullet_delay < bullet_delay_max) //딜레이가 맥시멈보다 낮아지면
+                            bullet_delay = bullet_delay_max; //그 이하로 내려가지 않는다.
                         break;
                     }
-                    item[i].is_presented = 0;
+                    item[i].is_presented = 0; //아이템을 먹었음을 표시
                     item[i].presented_time = spent_time;
                 }
             }
         }
 
-
+        //플레이어의 라이프, 스코어와 진행 시간을 화면에 출력합니다.
         sprintf(info, "life:%d score:%d time:%d"
             , player.life, player.score, spent_time / 1000);
         text.setString(info);
 
         window.clear(Color::Black);
-        window.draw(bg_sprite);
+        window.draw(bg_sprite); //배경
 
         // draw는 나중에 호출할수록 우선순위가 높아짐
         for (int i = 0; i < ENEMY_NUM; i++)
-            if (enemy[i].life > 0)
+            if (enemy[i].life > 0) //적이 살아있을 때 그린다.
                 window.draw(enemy[i].sprite);
         for (int i = 0; i < ITEM_NUM; i++)
-            if (item[i].is_presented)
+            if (item[i].is_presented) //아이템이 나타날때 그린다.
                 window.draw(item[i].sprite);
 
-        window.draw(player.sprite);
-        window.draw(boss.sprite);
-        window.draw(text);
+        window.draw(player.sprite); //플레이어
+        window.draw(boss.sprite); //보스
+        window.draw(text); //정보
         for (int i = 0; i < BULLET_NUM; i++)
-            if (bullet[i].is_fired)
+            if (bullet[i].is_fired) //총알을 쏠 때 그린다.
                 window.draw(bullet[i].sprite);
 
         if (is_gameover)
@@ -486,6 +489,7 @@ void Game::boss1() {
     }
 }
 
+// 김현지
 void Game::boss2() {
     struct Textures t;
     t.bg.loadFromFile("./resources/images/background.png");
@@ -562,7 +566,7 @@ void Game::boss2() {
     struct Boss boss;
     boss.sprite.setTexture(&t.boss);
     boss.sprite.setSize(Vector2f(678, 368));
-    boss.sprite.setPosition(900, 100);
+    boss.sprite.setPosition(670, 100);
 
     // 총알
     int bullet_speed = 25;
@@ -620,22 +624,16 @@ void Game::boss2() {
             case Event::Closed:
                 window.close();      // 윈도를 닫는다
                 break;
-                // 키보드를 눌렀을 때(누른 순간만을 감지)
-            case Event::KeyPressed:
-            {
-                break;
-            }
             }
         }
 
-        /* game상태 update */
+        //플레이어 라이프가 다 깎이면 게임 오버
         if ((player.life <= 0))
         {
             is_gameover = 1;
         }
 
-        /* Player update */
-        // 방향키 start
+        //플레이어의 이동 제어 (방향키와 WASD 둘 다 조작 가능)
         if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player.sprite.move(-player.speed, 0);
@@ -651,21 +649,19 @@ void Game::boss2() {
         if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player.sprite.move(0, player.speed);
-        }   // 방향키 end
+        } 
 
         // Player 이동범위 제한
         if (player.x < 0)
             player.sprite.setPosition(0, player.y);
-        else if (player.x > W_WIDTH - 175)   // 175(그림의 너비)
+        else if (player.x > W_WIDTH - 450)   // 보스 이미지 영역을 침범하지 않게 너비 조정
             player.sprite.setPosition(W_WIDTH - 175, player.y);
 
         if (player.y < 0)
             player.sprite.setPosition(player.x, 0);
-        else if (player.y > W_HEIGHT - 105)   // 105(그림의 높이)
+        else if (player.y > W_HEIGHT - 200)   // 플레이어가 길기 때문에 약간 밑으로 내려갈 수 있게
             player.sprite.setPosition(player.x, W_HEIGHT - 105);
 
-
-        /* Bullet update */
         // 총알 발사
         if (Keyboard::isKeyPressed(Keyboard::Space))
         {
@@ -685,22 +681,22 @@ void Game::boss2() {
         }
         for (int i = 0; i < BULLET_NUM; i++)
         {
-            if (bullet[i].is_fired)
+            if (bullet[i].is_fired) //총알을 쐈을 때
             {
                 bullet[i].sprite.move(bullet_speed, 0);
-                if (bullet[i].sprite.getPosition().x > W_WIDTH)
-                    bullet[i].is_fired = 0;
+                if (bullet[i].sprite.getPosition().x > W_WIDTH) //총알이 오른쪽 맨 끝 벽에 닿으면
+                    bullet[i].is_fired = 0; //사라집니다.
             }
         }
 
 
-        /* Enemy update */
+        // Enemy를 관리
         for (int i = 0; i < ENEMY_NUM; i++)
         {
             // 10초마다 enemy가 리스폰
             if (spent_time % (1000 * enemy_respawn_time) < 1000 / 60 + 1)
             {
-                // 게임이 진행중일 때만 적을 리스폰 시키겠다.
+                // 게임이 진행중일 때만 적을 리스폰 합니다.
                 if (!is_gameover)
                 {
                     enemy[i].sprite.setSize(Vector2f(70, 70));
@@ -716,14 +712,14 @@ void Game::boss2() {
                 // player, enemy 충돌
                 if (is_collide(player.sprite, enemy[i].sprite))
                 {
-                    enemy[i].life -= 1;
+                    enemy[i].life -= 1; //적이 사라지고, 플레이어 라이프가 깎임.
                     player.life -= 1;;
 
                 }
                 // 적이 왼쪽 끝에 진입하려는 순간
                 else if (enemy[i].sprite.getPosition().x < 0)
                 {
-                    player.life -= 1;
+                    player.life -= 1; //플레이어 라이프가 깎이고 적이 사라짐
                     enemy[i].life = 0;
                 }
 
@@ -734,7 +730,7 @@ void Game::boss2() {
                     {
                         if (bullet[j].is_fired)
                         {
-                            enemy[i].life -= 1;
+                            enemy[i].life -= 1; //적이 사라지고 플레이어는 점수를 얻습니다.
                             player.score += enemy_score;
 
                             bullet[j].is_fired = 0;
@@ -769,13 +765,13 @@ void Game::boss2() {
                     case SPEED:   // player 이동속도
                         player.speed += 2;
 
-                        if (player.speed > player.speed_max)
+                        if (player.speed > player.speed_max) //맥시멈보다 높아지면 그 이상 올라가지 않게 처리
                             player.speed = player.speed_max;
                         break;
                     case DELAY:   // player 공격속도
                         bullet_delay -= 100;
 
-                        if (bullet_delay < bullet_delay_max)
+                        if (bullet_delay < bullet_delay_max) //맥시멈보다 더 낮아지면 그 이하 내려가지 않게 처리
                             bullet_delay = bullet_delay_max;
                         break;
                     }
