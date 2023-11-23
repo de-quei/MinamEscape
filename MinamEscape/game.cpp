@@ -562,7 +562,7 @@ void Game::boss2() {
     struct Boss boss;
     boss.sprite.setTexture(&t.boss);
     boss.sprite.setSize(Vector2f(678, 368));
-    boss.sprite.setPosition(900, 100);
+    boss.sprite.setPosition(670, 100);
 
     // ÃÑ¾Ë
     int bullet_speed = 25;
