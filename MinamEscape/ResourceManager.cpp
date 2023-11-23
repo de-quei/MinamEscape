@@ -6,8 +6,9 @@ using namespace sf;
 using namespace std;
 
 ResourceManager::ResourceManager() {
+
     // 리소스 초기화 코드
-    for (int i = 0; i < 18; ++i) {
+    for (int i = 0; i < 50; ++i) {
         string imagePath = "./resources/images/start" + to_string(i) + ".png";
         Texture texture;
         if (!texture.loadFromFile(imagePath)) {

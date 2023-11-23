@@ -140,7 +140,6 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="boss1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Program Files\MySQL\MySQL Server 8.0\lib\libmysql.dll" />
