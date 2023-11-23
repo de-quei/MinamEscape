@@ -6,15 +6,15 @@ using namespace sf;
 
 struct Player {
     RectangleShape sprite;
-    int speed;
-    int speed_max;
-    int score;
-    int life;
+    int speed //플레이어의 스피드
+    int speed_max; //스피드 맥시멈
+    int score; //점수
+    int life; //라이프
     float x, y;      // 플레이어 좌표
 };
 
 struct Boss {
-    RectangleShape sprite;
+    RectangleShape sprite; //보스 이미지 
 };
 
 // 총알
@@ -25,10 +25,11 @@ struct Bullet {
 
 struct Enemy {
     RectangleShape sprite;
-    int speed;
-    int life;
+    int speed; //적의 속도
+    int life; //적의 라이프
 };
 
+//type을 지정 enum 활용
 enum item_type {
     SPEED,      // 0
     DELAY      // 1
@@ -61,10 +62,10 @@ struct SButters {
     SoundBuffer rumble;
 };
 
-const int ENEMY_NUM = 5;
-const int BULLET_NUM = 50;
-const int ITEM_NUM = 2;
-const int W_WIDTH = 1280, W_HEIGHT = 720;
+const int ENEMY_NUM = 5; //적의 수
+const int BULLET_NUM = 50; //총알 갯수
+const int ITEM_NUM = 2; //아이템 갯수
+const int W_WIDTH = 1280, W_HEIGHT = 720; //창 크기
 const int GO_WIDTH = 320, GO_HEIGHT = 240;
 
 class Game {
@@ -73,6 +74,7 @@ public:
     void run();
 
 private:
+    //스토리를 진행할 때 필요한 것들
     RenderWindow window;
     Sprite start_bg_sprite;
     Sprite girl_sprite;
